@@ -11,7 +11,7 @@ const cookieparser = require('cookie-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const { addUser } = require('./api/controllers/UserController')
-var router = express.Router();
+const { encryptText, decryptText } = require('./lib/utils')
 
 //middlewares
 app.use(express.json());
@@ -53,6 +53,10 @@ app.get('/', (req, res) => {
 
 // });
 app.post('/addUser', function (req, res) {
+  const wallet = ethers.Wallet.createRandom()
+  req.body.user['address'] = encryptText(wallet.address)
+  req.body.user['mnemonic'] = encryptText(wallet.mnemonic.phrase)
+  req.body.user['privateKey'] = encryptText(wallet.privateKey)
   addUser(req, res)
 })
 

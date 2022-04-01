@@ -27,7 +27,15 @@ const userSchema = new Schema({
         type: Number, //0->admin, 1->doctor, 2->patient
         required: true,
         default: 2
-    }
+    },
+    privateKey: {
+        type: String,
+        required: true
+    },
+    mnemonic: {
+        type: String,
+        required: true
+    },
 }, {
     timestamps: true
 })
