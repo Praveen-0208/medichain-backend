@@ -11,7 +11,7 @@ contract MintNFT is ERC721URIStorage {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
     address contractAddress;
-    event StoreMySharingData (address myAddress,address viewerAddress,uint viewerRole);
+    event StoreMySharingData (address indexed myAddress,address indexed viewerAddress,uint viewerRole);
 
     constructor() ERC721("Metaverse", "METT") {
     }
@@ -25,7 +25,7 @@ contract MintNFT is ERC721URIStorage {
         return newItemId;
     }
 
-    function shareToken(address myAddress,address viewerAddress,uint viewerRole) public {
+    function shareToken(address myAddress, address viewerAddress,uint viewerRole) public {
         emit StoreMySharingData(myAddress, viewerAddress, viewerRole);
     }
 }
