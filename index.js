@@ -15,6 +15,7 @@ const { encryptText, decryptText } = require('./lib/utils')
 
 const ipfsHttpClient = require('ipfs-http-client');
 const { addFile } = require('./api/controllers/ipfsController');
+const { getFile, getTransactions } = require('./api/controllers/transactionController');
 const ipfs = ipfsHttpClient.create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
 
 //middlewares
@@ -53,9 +54,7 @@ app.get('/', (req, res) => {
     });
 });
 
-// app.post('/addUser', (req, res) => {
 
-// });
 app.post('/addUser', function (req, res) {
   const wallet = ethers.Wallet.createRandom()
   req.body.user['address'] = encryptText(wallet.address)
@@ -86,42 +85,11 @@ app.get('/addfile', function (req, res) {
 
 })
 //Getting the uploaded file via hash code.
-app.get('/getfile', function (req, res) {
+app.post('/getReport', getFile)
 
-  //This hash is returned hash of addFile router.
-  const validCID = 'HASH_CODE'
-
-  ipfs.files.get(validCID, function (err, files) {
-    files.forEach((file) => {
-      console.log(file.path)
-      console.log(file.content.toString('utf8'))
-    })
-  })
-})
 
 app.post("/addFile", addFile)
 
-// app.post('/addUser', async function (req, res) {
-
-//   const provider = ethers.getDefaultProvider(process.env.GANACHE_URL, {
-//     // chainId: 4,
-//     name: process.env.DEFAULT_NETWORK,
-//   })
-
-//   const walletWithProvider = new ethers.Wallet(
-//     // process.env.GANACHE_PRIVATE_KEY,
-//     '54585685ffe99b7ad091589ee73a10a42274a7766d071cdd42e1bc55baf55925',
-//     provider,
-//   )
-
-//   const contract = new ethers.Contract(
-//     USERCONTRACT_ADDRESS,
-//     USERCONTRACT_ABI,
-//     walletWithProvider,
-//   )
-
-//   const tx = await contract.addUser('0x452cD9df789D706f01b0DD5835a081d0E92825F1', 'abc', 'abc')
-//   res.send(tx)
-// })
+app.get("/getLogs", getTransactions)
 
 app.listen(9000, () => console.log('App listening on port 9000!'))
