@@ -10,7 +10,7 @@ const app = express();
 const cookieparser = require('cookie-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const { addUser } = require('./api/controllers/UserController')
+const { addUser, login, getUser } = require('./api/controllers/UserController')
 const { encryptText, decryptText } = require('./lib/utils')
 
 //middlewares
@@ -58,6 +58,16 @@ app.post('/addUser', function (req, res) {
   req.body.user['mnemonic'] = encryptText(wallet.mnemonic.phrase)
   req.body.user['privateKey'] = encryptText(wallet.privateKey)
   addUser(req, res)
+})
+
+app.post('/login', function (req, res) {
+  // addUser(req, res)
+  login(req, res)
+})
+
+app.get('/getUser/:address', function (req, res) {
+  // addUser(req, res)
+  getUser(req, res)
 })
 
 //for blockchain
