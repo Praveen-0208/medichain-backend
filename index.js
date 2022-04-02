@@ -13,6 +13,10 @@ const mongoose = require('mongoose');
 const { addUser } = require('./api/controllers/UserController')
 const { encryptText, decryptText } = require('./lib/utils')
 
+const ipfsHttpClient = require('ipfs-http-client');
+const { addFile } = require('./api/controllers/ipfsController');
+const ipfs = ipfsHttpClient.create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
+
 //middlewares
 app.use(express.json());
 app.use(cookieparser());
@@ -60,17 +64,6 @@ app.post('/addUser', function (req, res) {
   addUser(req, res)
 })
 
-//for blockchain
-app.get('/addfile', function (req, res) {
-
-  ipfs.files.add(testBuffer, function (err, file) {
-    if (err) {
-      console.log(err);
-    }
-    console.log(file)
-  })
-
-})
 //Getting the uploaded file via hash code.
 app.get('/getfile', function (req, res) {
 
@@ -83,9 +76,9 @@ app.get('/getfile', function (req, res) {
       console.log(file.content.toString('utf8'))
     })
   })
-
-
 })
+
+app.post("/addFile", addFile)
 
 // app.post('/addUser', async function (req, res) {
 
