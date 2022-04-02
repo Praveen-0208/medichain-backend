@@ -10,18 +10,22 @@ exports.getFile = async (req, res) => {
     const provider = new ethers.providers.Web3Provider(web3.currentProvider)
     const signer = provider.getSigner()
 
-    // fetch the id from nft and access the file
-
     let contract = new ethers.Contract(constants.MINTNFT_NFT_CONTRACT_ADDRESS,NFT.abi, signer)
-    console.log("contract", contract)
+    // console.log("contract", contract)
     let transaction = await contract.shareToken(from, to, role)
     let tx = await transaction.wait()
-    console.log(tx)
     
+    const result = await contract.getTokens(from);
 
-    return res.status(200).json({
-        message: tx
-    })
+    if(result){
+        return res.status(200).json({
+            result
+         })
+    }
+
+    return res.status(404).json({
+        message: "No data found"
+     })
 }
 
 
