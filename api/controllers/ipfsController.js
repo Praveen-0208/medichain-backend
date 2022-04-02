@@ -47,7 +47,7 @@ exports.addFile = async (req, res) => {
       // console.log(ipfsFile)
 
       // console.log(ipfs)
-			ipfs.add(ipfsFile,  function (err, result) {
+			ipfs.add(ipfsFile, async function (err, result) {
                 if (err) {
                   return res.status(400).json({ error: "Couldn't add file", e: err })
                 }
