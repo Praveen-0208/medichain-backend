@@ -13,6 +13,16 @@ contract MintNFT is ERC721URIStorage {
     address contractAddress;
     event StoreMySharingData (address indexed myAddress,address indexed viewerAddress,uint viewerRole);
 
+    struct TokenMetaData {
+        uint tokenId;
+        address owner;
+        string tokenURI;
+    }
+
+    TokenMetaData[] private _tokenMetaData;
+
+
+
     constructor() ERC721("Metaverse", "METT") {
     }
 
@@ -22,10 +32,22 @@ contract MintNFT is ERC721URIStorage {
 
         _mint(msg.sender, newItemId);
         _setTokenURI(newItemId, fileHash);
+        _tokenMetaData.push(TokenMetaData(newItemId, msg.sender, fileHash));
         return newItemId;
     }
 
     function shareToken(address myAddress, address viewerAddress,uint viewerRole) public {
         emit StoreMySharingData(myAddress, viewerAddress, viewerRole);
+    }
+
+    function getTokens(address myAddress) public view returns(string[] memory){
+        string[] memory result;
+        for (uint i = 0; i < _tokenMetaData.length; i++) {
+            if (_tokenMetaData[i].owner == myAddress) {
+                result[i] = _tokenMetaData[i].tokenURI;
+            }
+        }
+
+        return result;
     }
 }

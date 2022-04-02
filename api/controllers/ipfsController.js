@@ -14,7 +14,7 @@ const constants = require('../../lib/constants');
 
 exports.addFile = async (req, res) => {
    
-  // console.log(Web3Modal)
+  //// console.log(Web3Modal)
   //   const web3Modal = new Web3Modal()
   //   const connection = await web3Modal.connect()
     const web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:7545"))
@@ -30,33 +30,33 @@ exports.addFile = async (req, res) => {
       keepExtensions: true
     })
 
-    // console.log(form)
+    //// console.log(form)
 
 	form.parse(req, async (err, fields, files) => {
     if(err){
-      // console.log(err)
+      //// console.log(err)
       return res.status(500).json({
         error: 'something went wrong'
       })
     }
-    console.log(files,"files")
+   // console.log(files,"files")
 		if (files.report) {
 			const testBuffer = fs.readFileSync(files.report.path);
 
       const ipfsFile = {path: files.report.path, content: testBuffer}
 
-      console.log(ipfsFile)
+     // console.log(ipfsFile)
 
-      // console.log(ipfs.files.add)
+      //// console.log(ipfs.files.add)
 			ipfs.add(testBuffer).then(async (result) => {
 
                 
-                // console.log("this is the file hash....")
-                // console.log(result)
+                //// console.log("this is the file hash....")
+                //// console.log(result)
         
                 let contract = new ethers.Contract(constants.MINTNFT_NFT_CONTRACT_ADDRESS,NFT.abi, signer)
-                console.log("contract", contract)
-                let transaction = await contract.createToken(result.path) // hard coded value. replace with file hash from ipfs
+               // console.log("contract", contract)
+                let transaction = await contract.createToken(result.path, {from: fields.ownerAddress}) // hard coded value. replace with file hash from ipfs
                 let tx = await transaction.wait()
                 let event = tx.events[0]
                 let value = event.args[2]
