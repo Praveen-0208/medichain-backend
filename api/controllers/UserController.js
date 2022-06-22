@@ -34,36 +34,33 @@ exports.getUser = (req, res) => {
                 error: "ACCOUNT DOESNOT EXIST",
             });
         }
-            if(viewerRole !== 2){
+        if (viewerRole !== 2) {
+            delete user['mnemonic']
+            delete user['privateKey']
+
+            return res.json({
+                user
+            })
+        }
+
+        User.findOne({ address: viewerAddr }, (err, viewer) => {
+            if (err || !viewer) {
+                return res.status(400).json({
+                    error: "VIEWER DOESNOT EXIST",
+                });
+            }
+            if (viewer.address === targetAddr) {
                 delete user['mnemonic']
                 delete user['privateKey']
-        
+
                 return res.json({
                     user
                 })
             }
 
-            User.findOne({address: viewerAddr}, (err, viewer) => {
-                if(err || !viewer){
-                    return res.status(400).json({
-                        error: "VIEWER DOESNOT EXIST",
-                    });
-                }
-                if(viewer.address === targetAddr){
-                    delete user['mnemonic']
-                    delete user['privateKey']
-        
-                    return res.json({
-                        user
-                    })
-                }
-
-            })
-
+        })
     })
     return res.status(401).json({
         message: "UNAUTHORIZED ACCESS"
     })
-
-
 }
