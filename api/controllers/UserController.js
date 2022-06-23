@@ -27,7 +27,40 @@ exports.login = (req, res) => {
 exports.getUser = (req, res) => {
     const { viewerAddr, viewerRole, targetAddr } = req.params;
     console.log(req.params)
-    User.findOne({ address: targetAddr }, (err, user) => {
+    // User.findOne({ address: targetAddr }, (err, user) => {
+    //     if (err || !user) {
+    //         console.log(err, user)
+    //         return res.status(400).json({
+    //             error: "ACCOUNT DOESNOT EXIST",
+    //         });
+    //     }
+    //     if (viewerRole !== 2) {
+    //         delete user['mnemonic']
+    //         delete user['privateKey']
+
+    //         return res.json({
+    //             user
+    //         })
+    //     }
+
+    //     User.findOne({ address: viewerAddr }, (err, viewer) => {
+    //         if (err || !viewer) {
+    //             return res.status(400).json({
+    //                 error: "VIEWER DOESNOT EXIST",
+    //             });
+    //         }
+    //         if (viewer.address === targetAddr) {
+    //             delete user['mnemonic']
+    //             delete user['privateKey']
+
+    //             return res.json({
+    //                 user
+    //             })
+    //         }
+
+    //     })
+    // })
+    User.findOne({ phone: targetAddr }, (err, user) => {
         if (err || !user) {
             console.log(err, user)
             return res.status(400).json({
@@ -43,13 +76,13 @@ exports.getUser = (req, res) => {
             })
         }
 
-        User.findOne({ address: viewerAddr }, (err, viewer) => {
+        User.findOne({ phone: viewerAddr }, (err, viewer) => {
             if (err || !viewer) {
                 return res.status(400).json({
                     error: "VIEWER DOESNOT EXIST",
                 });
             }
-            if (viewer.address === targetAddr) {
+            if (viewer.phone === targetAddr) {
                 delete user['mnemonic']
                 delete user['privateKey']
 
@@ -57,7 +90,6 @@ exports.getUser = (req, res) => {
                     user
                 })
             }
-
         })
     })
     return res.status(401).json({

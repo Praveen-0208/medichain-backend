@@ -33,8 +33,7 @@ const userSchema = new Schema({
         required: true
     },
     role: {
-        // type: Number, //0->admin, 1->doctor, 2->patient
-        type: String,
+        type: String,//0->admin, 1->doctor, 2->patient
         required: true,
         default: 2
     },
