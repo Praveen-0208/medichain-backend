@@ -26,74 +26,53 @@ exports.login = (req, res) => {
 }
 
 exports.getUser = (req, res) => {
-    const { viewerAddr, viewerRole, targetAddr } = req.params;
-    console.log(req.params)
-    // User.findOne({ address: targetAddr }, (err, user) => {
-    //     if (err || !user) {
-    //         console.log(err, user)
-    //         return res.status(400).json({
-    //             error: "ACCOUNT DOESNOT EXIST",
-    //         });
-    //     }
-    //     if (viewerRole !== 2) {
-    //         delete user['mnemonic']
-    //         delete user['privateKey']
-
-    //         return res.json({
-    //             user
-    //         })
-    //     }
-
-    //     User.findOne({ address: viewerAddr }, (err, viewer) => {
-    //         if (err || !viewer) {
-    //             return res.status(400).json({
-    //                 error: "VIEWER DOESNOT EXIST",
-    //             });
-    //         }
-    //         if (viewer.address === targetAddr) {
-    //             delete user['mnemonic']
-    //             delete user['privateKey']
-
-    //             return res.json({
-    //                 user
-    //             })
-    //         }
-
-    //     })
-    // })
+    const { viewerAddr, viewerRole, targetAddr } = req.body;
+    console.log(viewerAddr, viewerRole, targetAddr, "is the body")
     User.findOne({ phone: targetAddr }, (err, user) => {
         if (err || !user) {
             console.log(err, user)
             return res.status(400).json({
-                error: "ACCOUNT DOESNOT EXIST",
+                message: "ACCOUNT DOESNOT EXIST",
             });
         }
-        if (viewerRole !== 2) {
-            delete user['mnemonic']
-            delete user['privateKey']
-
-            return res.json({
-                user
+        if (viewerRole !== '2') {
+            User.findOne({ phone: viewerAddr }, (err, viewer) => {
+                if (err || !viewer) {
+                    return res.status(400).json({
+                        message: "VIEWER DOESNOT EXIST",
+                    });
+                }
+                return res.json({
+                    user: user
+                })
             })
         }
+        else {
+            return res.status(400).json({
+                message: "UNAUTHORIZED ACCESS",
+            });
+        }
+    })
+    // return res.status(401).json({
+    //     message: "UNAUTHORIZED ACCESS"
+    // })
+}
 
-        User.findOne({ phone: viewerAddr }, (err, viewer) => {
-            if (err || !viewer) {
-                return res.status(400).json({
-                    error: "VIEWER DOESNOT EXIST",
-                });
-            }
-            if (viewer.phone === targetAddr) {
-                delete user['mnemonic']
-                delete user['privateKey']
-
-                return res.json({
-                    user
-                })
-            }
+exports.getAllDetails = (req, res) => {
+    const { targetAddr } = req.body;
+    console.log(targetAddr, "is the body")
+    User.findOne({ phone: targetAddr }, (err, user) => {
+        if (err || !user) {
+            console.log(err, user)
+            return res.status(400).json({
+                message: "ACCOUNT DOESNOT EXIST",
+            });
+        }
+        return res.json({
+            user: user
         })
     })
-    return res.status(401).json({
-        message: "UNAUTHORIZED ACCESS"
-    })
+    // return res.status(401).json({
+    //     message: "UNAUTHORIZED ACCESS"
+    // })
 }
