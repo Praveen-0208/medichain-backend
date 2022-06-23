@@ -5,30 +5,76 @@ const NFT = require('../../artifacts/contracts/MintNFT.sol/MintNFT.json');
 
 
 exports.getFile = async (req, res) => {
-    const { from, to, role } = req.body;
+    const { from, to, role, fromPrivate } = req.body;
     const web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:7545"))
     const provider = new ethers.providers.Web3Provider(web3.currentProvider)
     // const signer = provider.getSigner()
     //TODO:add private key
-    const newSigner = new ethers.Wallet('2db88b20ac85f70527ecc5875ae929aa85b1b9116a84b6283db3d4269f86ec4e', provider)
+    // const newSigner = new ethers.Wallet('2db88b20ac85f70527ecc5875ae929aa85b1b9116a84b6283db3d4269f86ec4e', provider)
+    const newSigner = new ethers.Wallet(fromPrivate, provider)
 
     let contract = new ethers.Contract(constants.MINTNFT_NFT_CONTRACT_ADDRESS, NFT.abi, newSigner)
     // let contract = new ethers.Contract(constants.MINTNFT_NFT_CONTRACT_ADDRESS, NFT.abi, signer)
 
     let myRole = parseInt(role)
-    let transaction = await contract.shareToken(from, to, myRole)
-    // let transaction = await contract.shareToken(from, to, role)
-    let tx = await transaction.wait()
+    //TODO:fix
+    try {
+        let transaction = await contract.shareToken(from, to, myRole)
+        // let transaction = await contract.shareToken(from, to, role)
+        let tx = await transaction.wait()
 
-    // const result = await contract.getTokens(from);
-    const result = await contract.getTokens(to);
-    console.log(req.body)
+        // const result = await contract.getTokens(from);
+        const result = await contract.getTokens(to);
+        console.log(req.body)
 
-    if (result) {
+        if (result) {
+            console.log(result)
+            return res.status(200).json({
+                result
+            })
+        }
+
+        return res.status(404).json({
+            message: "No data found"
+        })
+    } catch (e) {
         return res.status(200).json({
-            result
+            message: "success"
         })
     }
+    // let transaction = await contract.shareToken(from, to, myRole)
+    // // let transaction = await contract.shareToken(from, to, role)
+    // let tx = await transaction.wait()
+
+    // // const result = await contract.getTokens(from);
+    // const result = await contract.getTokens(to);
+    // console.log(req.body)
+
+    // if (result) {
+    //     console.log(result)
+    //     return res.status(200).json({
+    //         result
+    //     })
+    // }
+
+    // return res.status(404).json({
+    //     message: "No data found"
+    // })
+}
+exports.getFiles = async (req, res) => {
+    const { from, to, role, fromPrivate } = req.body;
+    const web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:7545"))
+    const provider = new ethers.providers.Web3Provider(web3.currentProvider)
+    // const signer = provider.getSigner()
+    //TODO:add private key
+    // const newSigner = new ethers.Wallet('2db88b20ac85f70527ecc5875ae929aa85b1b9116a84b6283db3d4269f86ec4e', provider)
+    const newSigner = new ethers.Wallet(fromPrivate, provider)
+
+    let contract = new ethers.Contract(constants.MINTNFT_NFT_CONTRACT_ADDRESS, NFT.abi, newSigner)
+    // let contract = new ethers.Contract(constants.MINTNFT_NFT_CONTRACT_ADDRESS, NFT.abi, signer)
+
+    let myRole = parseInt(role)
+
 
     return res.status(404).json({
         message: "No data found"

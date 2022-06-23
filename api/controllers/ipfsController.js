@@ -14,8 +14,7 @@ exports.addFile = async (req, res) => {
   const provider = new ethers.providers.Web3Provider(web3.currentProvider)
 
   const signer = provider.getSigner()
-  //TODO:add private key
-  const newSigner = new ethers.Wallet('90e6e861f29fab1bd06b99476ef19f5991b20dd892c23edb8c24d8ce4e987a71', provider)
+
   const form = new IncomingForm({
     keepExtensions: true
   })
@@ -26,6 +25,7 @@ exports.addFile = async (req, res) => {
         error: 'something went wrong'
       })
     }
+    const newSigner = new ethers.Wallet(fields.ownerKey, provider)
     if (files.report) {
       const testBuffer = fs.readFileSync(files.report.path);
 
@@ -41,7 +41,7 @@ exports.addFile = async (req, res) => {
         let value = event.args[2]
         let tokenId = value.toNumber()
 
-        return res.status(200).json({ message: "file added successfully. token id is " + tokenId + " and price is " + transaction.gasPrice })
+        return res.status(200).json({ message: "file added successfully. token id is " + tokenId + " and price is " + transaction.gasPrice, path: result.path, token: tokenId })
         // return res.status(200).json({ message: "success " + result.path })
 
       })

@@ -10,7 +10,7 @@ const app = express();
 const cookieparser = require('cookie-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const { addUser, login, getUser } = require('./api/controllers/UserController')
+const { addUser, login, getUser, getAllDetails } = require('./api/controllers/UserController')
 const { encryptText, decryptText } = require('./lib/utils')
 
 const ipfsHttpClient = require('ipfs-http-client');
@@ -20,6 +20,7 @@ const ipfs = ipfsHttpClient.create({ host: 'ipfs.infura.io', port: 5001, protoco
 
 //middlewares
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieparser());
 app.use(cors());
 
@@ -45,7 +46,7 @@ app.get('/', (req, res) => {
     .collection('demo')
     .findOne({ type: 'DB_TEST_DATA' })
     .then((data) => {
-      return res.status(200).json(data);
+      return res.status(200).json(data ? data : 'connected successfully');
     })
     .catch(() => {
       return res.status(500).json({
@@ -57,9 +58,11 @@ app.get('/', (req, res) => {
 
 app.post('/addUser', function (req, res) {
   const wallet = ethers.Wallet.createRandom()
-  req.body.user['address'] = encryptText(wallet.address)
-  req.body.user['mnemonic'] = encryptText(wallet.mnemonic.phrase)
-  req.body.user['privateKey'] = encryptText(wallet.privateKey)
+  // console.log()
+  // req.body.user['address'] = encryptText(wallet.address)
+  // req.body.user['mnemonic'] = encryptText(wallet.mnemonic.phrase)
+  // req.body.user['privateKey'] = encryptText(wallet.privateKey)
+  console.log('\n\nuser', req.body)
   addUser(req, res)
 })
 
@@ -68,22 +71,27 @@ app.post('/login', function (req, res) {
   login(req, res)
 })
 
-app.get('/getUser/:address', function (req, res) {
+app.post('/getUser', function (req, res) {
   // addUser(req, res)
   getUser(req, res)
 })
 
-//for blockchain
-app.get('/addfile', function (req, res) {
-
-  ipfs.files.add(testBuffer, function (err, file) {
-    if (err) {
-      console.log(err);
-    }
-    console.log(file)
-  })
-
+app.post('/getAllDetails', function (req, res) {
+  // addUser(req, res)
+  getAllDetails(req, res)
 })
+
+//for blockchain
+// app.get('/addfile', function (req, res) {
+
+//   ipfs.files.add(testBuffer, function (err, file) {
+//     if (err) {
+//       console.log(err);
+//     }
+//     console.log(file)
+//   })
+
+// })
 //Getting the uploaded file via hash code.
 app.post('/getReport', getFile)
 
